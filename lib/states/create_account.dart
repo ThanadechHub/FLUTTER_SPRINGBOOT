@@ -15,6 +15,10 @@ class _CreateAccountState extends State<CreateAccount> {
   double? lat, lng;
   bool load = true;
 
+  TextEditingController nameController = TextEditingController();
+  TextEditingController userController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   final formField = GlobalKey<FormState>();
 
   @override
@@ -75,6 +79,7 @@ class _CreateAccountState extends State<CreateAccount> {
       margin: const EdgeInsets.only(top: 16),
       width: size * 0.6,
       child: TextFormField(
+        controller: nameController,
         validator: (value) {
           if (value!.isEmpty) {
             return 'โปรดระบุชื่อ!';
@@ -93,7 +98,12 @@ class _CreateAccountState extends State<CreateAccount> {
             borderRadius: BorderRadius.circular(30),
           ),
           focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dart)),
+            borderSide: BorderSide(color: MyConstant.dart),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
         ),
         keyboardType: TextInputType.text,
       ),
@@ -105,6 +115,14 @@ class _CreateAccountState extends State<CreateAccount> {
       margin: const EdgeInsets.only(top: 16),
       width: size * 0.6,
       child: TextFormField(
+        controller: userController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'โปรดระบุชื่อผู้ใช้!';
+          } else {
+            return null;
+          }
+        },
         decoration: InputDecoration(
           labelText: 'User : ',
           prefixIcon: const Icon(
@@ -116,7 +134,12 @@ class _CreateAccountState extends State<CreateAccount> {
             borderRadius: BorderRadius.circular(30),
           ),
           focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dart)),
+            borderSide: BorderSide(color: MyConstant.dart),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
         ),
         keyboardType: TextInputType.text,
       ),
@@ -128,6 +151,14 @@ class _CreateAccountState extends State<CreateAccount> {
       margin: const EdgeInsets.only(top: 16),
       width: size * 0.6,
       child: TextFormField(
+        controller: passwordController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'โปรดระบุรหัสผ่าน!';
+          } else {
+            return null;
+          }
+        },
         decoration: InputDecoration(
           labelText: 'Password : ',
           prefixIcon: const Icon(
@@ -139,7 +170,12 @@ class _CreateAccountState extends State<CreateAccount> {
             borderRadius: BorderRadius.circular(30),
           ),
           focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dart)),
+            borderSide: BorderSide(color: MyConstant.dart),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
         ),
         keyboardType: TextInputType.text,
       ),
@@ -166,14 +202,16 @@ class _CreateAccountState extends State<CreateAccount> {
     return Center(
       child: Form(
         key: formField,
-        child: Column(
-          children: [
-            buildName(size),
-            buildUser(size),
-            buildPassword(size),
-            buildMap(size),
-            buildCreateAccount(size)
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildName(size),
+              buildUser(size),
+              buildPassword(size),
+              buildMap(size),
+              buildCreateAccount(size)
+            ],
+          ),
         ),
       ),
     );
@@ -186,7 +224,13 @@ class _CreateAccountState extends State<CreateAccount> {
       child: ElevatedButton.icon(
         style: MyStyle().myButtonStyleV2(),
         onPressed: () {
-          if (formField.currentState!.validate()) {}
+          if (formField.currentState!.validate()) {
+            String name = nameController.text;
+            String user = userController.text;
+            String password = passwordController.text;
+            print(
+                'name = $name , user = $user, password = $password, lat = $lat , lng = $lng');
+          }
         },
         icon: const Icon(Icons.cloud_upload_rounded, color: Colors.white),
         label: const Text(
@@ -208,20 +252,19 @@ class _CreateAccountState extends State<CreateAccount> {
     };
   }
 
-  Expanded buildMap(double size) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 30),
-        width: size * 0.8,
-        color: Colors.grey,
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: LatLng(lat!, lng!),
-            zoom: 20,
-          ),
-          onMapCreated: (controller) {},
-          markers: setMarkers(),
+  Container buildMap(double size) {
+    return Container(
+      height: 200,
+      margin: const EdgeInsets.symmetric(vertical: 30),
+      width: size * 0.8,
+      color: Colors.grey,
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(lat!, lng!),
+          zoom: 20,
         ),
+        onMapCreated: (controller) {},
+        markers: setMarkers(),
       ),
     );
   }

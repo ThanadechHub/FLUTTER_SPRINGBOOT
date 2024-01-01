@@ -5,6 +5,7 @@ import 'package:flutter_application/widgets/show_progress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:dio/dio.dart';
 
 class CreateAccount extends StatefulWidget {
   @override
@@ -14,6 +15,10 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   double? lat, lng;
   bool load = true;
+
+  String name = '';
+  String username = '';
+  String password = '';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController userController = TextEditingController();
@@ -225,12 +230,13 @@ class _CreateAccountState extends State<CreateAccount> {
         style: MyStyle().myButtonStyleV2(),
         onPressed: () {
           if (formField.currentState!.validate()) {
-            String name = nameController.text;
-            String user = userController.text;
-            String password = passwordController.text;
+            name = nameController.text;
+            username = userController.text;
+            password = passwordController.text;
             print(
-                'name = $name , user = $user, password = $password, lat = $lat , lng = $lng');
+                'name = $name , username = $username, password = $password, lat = $lat , lng = $lng');
           }
+          insertNewUser(name: name, password: password, username: username);
         },
         icon: const Icon(Icons.cloud_upload_rounded, color: Colors.white),
         label: const Text(
@@ -239,6 +245,13 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
       ),
     );
+  }
+
+  Future<Null> insertNewUser(
+      {String? name, String? username, String? password}) async {
+    print("apiCheckUser");
+    String apiCheckUser = 'http://10.0.2.2:8080/api/user';
+    await Dio().get(apiCheckUser).then((value) => print("### value = $value"));
   }
 
   Set<Marker> setMarkers() {

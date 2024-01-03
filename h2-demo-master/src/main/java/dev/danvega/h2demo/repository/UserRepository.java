@@ -4,4 +4,6 @@ import dev.danvega.h2demo.model.Users;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<Users,Integer> {
+    Users findByUsername(String username);
+
 }

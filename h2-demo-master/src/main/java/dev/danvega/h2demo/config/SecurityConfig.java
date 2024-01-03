@@ -13,10 +13,10 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.ignoringAntMatchers("/h2-console/**"))
+                .csrf(csrf -> csrf.ignoringAntMatchers("/h2-console/**", "/api/**"))  // เปลี่ยน "/api/user" เป็น "/api/**"
                 .authorizeRequests(auth -> auth
+                        .antMatchers("/api/**").permitAll()  // เปลี่ยน "/api/user" เป็น "/api/**"
                         .antMatchers("/h2-console/**").permitAll()
-                        .mvcMatchers("/api/user").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions().sameOrigin())

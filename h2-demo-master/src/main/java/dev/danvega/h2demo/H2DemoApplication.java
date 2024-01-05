@@ -1,6 +1,8 @@
 package dev.danvega.h2demo;
 
+import dev.danvega.h2demo.model.Loan;
 import dev.danvega.h2demo.model.Users;
+import dev.danvega.h2demo.repository.LoanRepository;
 import dev.danvega.h2demo.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,9 +20,14 @@ public class H2DemoApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(UserRepository repository) {
+	CommandLineRunner commandLineRunner(UserRepository userRepository, LoanRepository loanRepository) {
 		return args -> {
-			repository.save(new Users(null,"Mark Heckler","Mark","12123"));
+			userRepository.save(new Users(null,"Mark Heckler","d","1"));
+			loanRepository.save(new Loan(null,"สินเชื่อบัตรกดเงินสด"));
+			loanRepository.save(new Loan(null,"สินเชื่อทะเบียนรถ"));
+			loanRepository.save(new Loan(null,"สินเชื่อเพื่อคนมีคอนโด"));
+
+
 		};
 	}
 

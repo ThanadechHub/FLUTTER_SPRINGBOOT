@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/utility/my_constant.dart';
+import 'package:flutter_application/utility/my_dialog.dart';
 import 'package:flutter_application/utility/my_style.dart';
 import 'package:flutter_application/widgets/show_progress.dart';
 import 'package:geolocator/geolocator.dart';
@@ -250,8 +251,31 @@ class _CreateAccountState extends State<CreateAccount> {
   Future<Null> insertNewUser(
       {String? name, String? username, String? password}) async {
     print("apiCheckUser");
-    String apiCheckUser = 'http://10.0.2.2:8080/api/user';
-    await Dio().get(apiCheckUser).then((value) => print("### value = $value"));
+    String apiCheckUser = 'http://10.0.2.2:8080/api/user?username=$username';
+    print("### apiCheckUser = $apiCheckUser");
+    await Dio().get(apiCheckUser).then(
+      (value) async {
+        print("### value = $value");
+        if (value.toString() == '[null]') {
+          String apiInsertUser = 'http://10.0.2.2:8080/api/createUser';
+          await Dio().post(apiInsertUser, data: {
+            'name': name,
+            'username': username,
+            'password': password
+          }).then((value) {
+            print("### statusCode = $value.statusCode");
+            if (value.statusCode == 201) {
+              Navigator.pop(context);
+            } else {
+              normalDialog(context, '', 'Error', 'Please Try Again');
+            }
+          });
+        } else {
+          normalDialog(
+              context, username!, 'User Dulicate', 'Please Change User');
+        }
+      },
+    );
   }
 
   Set<Marker> setMarkers() {

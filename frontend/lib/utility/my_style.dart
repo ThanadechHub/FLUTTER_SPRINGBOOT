@@ -28,7 +28,7 @@ class MyStyle {
       );
 
   TextStyle h3Style() => const TextStyle(
-        fontSize: 14,
+        fontSize: 20,
         fontWeight: FontWeight.normal,
         color: Color.fromARGB(255, 25, 25, 25),
       );

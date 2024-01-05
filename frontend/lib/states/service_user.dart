@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/model/loan.dart';
 import 'package:flutter_application/utility/my_constant.dart';
 import 'package:flutter_application/utility/my_style.dart';
+import 'package:flutter_application/widgets/show_image.dart';
 import 'package:flutter_application/widgets/show_progress.dart';
 import 'package:flutter_application/widgets/show_title.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,22 +92,101 @@ class _ServiceUserState extends State<ServiceUser> {
     );
   }
 
+  String cutWord(String string) {
+    String word = string;
+    if (word.length > 100) {
+      word = word.substring(1, 100);
+      word = '$word...';
+    }
+    return word;
+  }
+
+  Future<Null> showDetailDialog(LoanModel model) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: ListTile(
+          leading: ShowImage(),
+          title: ShowTitle(
+            title: " detail " + model.name,
+            textStyle: MyStyle().h2Style(),
+          ),
+        ),
+        children: [
+          for (int i = 0; i <= pathLoanImages.length; i++)
+            if (model.id == i)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(pathLoanImages[i - 1]),
+              ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ShowTitle(
+                  title: " รายการที่ " + model.id.toString(),
+                  textStyle: MyStyle().h2Style(),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ShowTitle(
+                title: "รายละเอียด " + model.name,
+                textStyle: MyStyle().h3Style()),
+          )
+        ],
+      ),
+    );
+  }
+
   ListView buildListView() {
     return ListView.builder(
       shrinkWrap: true,
       physics: const ScrollPhysics(),
       itemCount: pathLoanImages.length,
-      itemBuilder: (context, index) => Row(
-        children: [
-          Container(
-            child: Image.asset(
-              pathLoanImages[
-                  index], // แทนที่ 'path/to/image.jpg' ด้วย path จริง
-              height: 50, // ปรับความสูงตามต้องการ
-              width: 50, // ปรับความกว้างตามต้องการ
+      itemBuilder: (context, index) => GestureDetector(
+        onTap: () {
+          showDetailDialog(LoanModels[index]);
+        },
+        child: Card(
+          color: index % 2 == 0 ? Colors.grey.shade200 : MyConstant.statndard,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 250,
+                  height: 120,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShowTitle(
+                        title: LoanModels[index].name,
+                        textStyle: MyStyle().h3Style(),
+                      ),
+                      ShowTitle(
+                        title: cutWord(" รายละเอียด" + LoanModels[index].name),
+                        textStyle: MyStyle().h3Style(),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Image.asset(
+                    pathLoanImages[
+                        index], // แทนที่ 'path/to/image.jpg' ด้วย path จริง
+                    height: 50, // ปรับความสูงตามต้องการ
+                    width: 50, // ปรับความกว้างตามต้องการ
+                  ),
+                )
+              ],
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
